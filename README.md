@@ -79,6 +79,5 @@ CalendR is still in beta and all comments/PRs are welcome :)
 TODO (And / Or planned)
 -----------------------
 
- * Renderers
  * Integration for current frameworks (Symfony2 bundle already in development)
  * Add providers for some hosted services

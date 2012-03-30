@@ -106,6 +106,11 @@ class Calendar
      */
     public function render(PeriodInterface $period, $renderer, array $options = array())
     {
+        if (isset($options['with_events']) && true === $options['with_events']) {
+            $this->getEvents($period, isset($options['event_options']) ? $options['event_options'] : array());
+            $options['factory'] = $this;
+        }
+
         return $this->getRenderer($renderer)->render($period, $options);
     }
 
