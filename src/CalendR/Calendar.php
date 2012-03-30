@@ -11,8 +11,9 @@
 
 namespace CalendR;
 
-use CalendR\Event\Manager;
-use CalendR\Period\PeriodInterface;
+use CalendR\Renderer\RendererInterface,
+    CalendR\Period\PeriodInterface,
+    CalendR\Event\Manager;
 
 /**
  * Factory class for calendar handling
@@ -27,20 +28,9 @@ class Calendar
     private $eventManager;
 
     /**
-     * @param Manager $eventManager
+     * @var array
      */
-    public function setEventManager(Manager $eventManager)
-    {
-        $this->eventManager = $eventManager;
-    }
-
-    /**
-     * @return Manager
-     */
-    public function getEventManager()
-    {
-        return $this->eventManager;
-    }
+    private $renderers = array();
 
     /**
      * @param \DateTime|int $yearOrStart
@@ -97,9 +87,70 @@ class Calendar
         return new Period\Day($yearOrStart);
     }
 
+    /**
+     * Returns an array of events for the given period
+     *
+     * @param Period\PeriodInterface $period
+     * @return array|Event\EventInterface
+     */
     public function getEvents(PeriodInterface $period)
     {
         return $this->eventManager->find($period);
     }
 
+    /**
+     * @param Period\PeriodInterface $period
+     * @param string $renderer
+     * @param array $options
+     * @return mixed
+     */
+    public function render(PeriodInterface $period, $renderer, array $options = array())
+    {
+        return $this->getRenderer($renderer)->render($period, $options);
+    }
+
+    /**
+     * Add a renderer to the available ones.
+     *
+     * @param Renderer\RendererInterface $renderer
+     * @return \CalendR\Calendar
+     */
+    public function addRenderer(RendererInterface $renderer)
+    {
+        $this->renderers[$renderer->getName()] = $renderer;
+
+        return $this;
+    }
+
+    /**
+     * Returns the wanted renderer
+     *
+     * @param $name
+     * @return \CalendR\Renderer\RendererInterface
+     * @throws Renderer\Exception\NotFound
+     */
+    public function getRenderer($name)
+    {
+        if (!isset($this->renderers[$name])) {
+            throw new Renderer\Exception\NotFound;
+        }
+
+        return $this->renderers[$name];
+    }
+
+    /**
+     * @param Manager $eventManager
+     */
+    public function setEventManager(Manager $eventManager)
+    {
+        $this->eventManager = $eventManager;
+    }
+
+    /**
+     * @return Manager
+     */
+    public function getEventManager()
+    {
+        return $this->eventManager;
+    }
 }

@@ -107,4 +107,12 @@ class TableRenderer extends HtmlRenderer
     {
         // TODO: Implement renderYear() method.
     }
+
+    /**
+     * @{inheritDoc}
+     */
+    public function getName()
+    {
+        return 'html_table';
+    }
 }
