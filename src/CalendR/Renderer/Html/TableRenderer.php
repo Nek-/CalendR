@@ -51,6 +51,9 @@ class TableRenderer extends HtmlRenderer
         if (isset($options['month']) && !$options['month']->contains($day->getBegin())){
             $attributes['class'] = 'out-of-month';
         }
+        if (!isset($options['month'])) {
+            return $this->renderTag('span', $this->getDayName($day->getBegin()).' '.$day->getBegin()->format('d'));
+        }
 
         return $this->renderTag('span', $day->getBegin()->format('d'), $attributes);
     }
@@ -85,6 +88,9 @@ class TableRenderer extends HtmlRenderer
      */
     protected function renderMonth(Month $month, array $options)
     {
+        $locale   = isset($options['locale'])   ? $options['locale']   : 'en';
+        $timezone = isset($options['timezone']) ? $options['timezone'] : null;
+
         $html = '';
         foreach ($month as $week) {
             $html .= $this->renderTag(
@@ -93,7 +99,13 @@ class TableRenderer extends HtmlRenderer
             );
         }
 
-        return $this->renderTag('table', $this->renderTag('tbody', $html));
+        $header = '';
+        foreach ($this->getDayNames($locale, $timezone) as $dayName) {
+            $header .= $this->renderTag('th', $dayName);
+        }
+        $header = $this->renderTag('tr', $header);
+
+        return $this->renderTag('table', $this->renderTag('thead', $header).$this->renderTag('tbody', $html));
     }
 
     /**
@@ -105,7 +117,18 @@ class TableRenderer extends HtmlRenderer
      */
     protected function renderYear(Year $year, array $options)
     {
-        // TODO: Implement renderYear() method.
+        $locale          = isset($options['locale'])            ? $options['locale']            : 'en';
+        $timezone        = isset($options['timezone'])          ? $options['timezone']          : null;
+        $monthTitleLevel = isset($options['month_title_level']) ? $options['month_title_level'] : 'h3';
+
+        $html = '';
+        $monthNames = $this->getMonthNames($locale, $timezone);
+        foreach ($year as $month) {
+            $head  = $this->renderTag($monthTitleLevel, array_shift($monthNames));
+            $html .= $this->renderTag('div', $head.$this->renderMonth($month, $options));
+        }
+
+        return $html;
     }
 
     /**
