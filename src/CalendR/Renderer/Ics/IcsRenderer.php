@@ -40,13 +40,13 @@ class IcsRenderer implements RendererInterface
      * @return string
      */
     public function render(PeriodInterface $period, array $options = array()) {
-        $factoryOptions = array();
-        if (!empty($options['factory_options'])) {
-            if (is_array($options['factory_options']) {
-                $factoryOptions = $options['factory_options'];
+        $eventOptions = array();
+        if (!empty($options['event_manager_options'])) {
+            if (is_array($options['event_manager_options']) {
+                $eventOptions = $options['event_manager_options'];
 
             } else {
-                throw new \InvalidArgumentException('My "factory_options" option must be an array !');
+                throw new \InvalidArgumentException('My "event_manager_options" option must be an array !');
             }
         }
 
@@ -55,7 +55,7 @@ class IcsRenderer implements RendererInterface
             'prodid' => $this->prodid
         ));
 
-        foreach ($this->factory->getEvents($period, $factoryOptions) as $event) {
+        foreach ($this->factory->getEvents($period, $eventOptions) as $event) {
             $event = new \qCal_Component_Vevent(array(
                 'dtend' => $event->getBegin()->format('Ymd\TH:iZ'),
                 'dtstart' => $event->getStart()->format('Ymd\TH:iZ'),
