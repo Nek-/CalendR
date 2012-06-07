@@ -27,7 +27,7 @@ class IcsRenderer implements RendererInterface
      * @param string $version='1.0'
      * @param string $culture='EN'
      */
-    public function __construct(CalendR\CalendR $factory, $prodid = '-//CalendR//NONSGML CalendR calendar v0.1//EN')
+    public function __construct(CalendR $factory, $prodid = '-//CalendR//NONSGML CalendR calendar v0.1//EN')
     {
         $this->factory = $factory;
     }
@@ -75,6 +75,6 @@ class IcsRenderer implements RendererInterface
      * @return string
      */
     public function getName() {
-
+        return 'ics';
     }
 }
